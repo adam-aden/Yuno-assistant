@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yuno To-Do Companion (Desktop Edition)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: #0f0f14;
+            color: #ffffff;
+            padding-top: 225px; /* เว้นพื้นที่ด้านบนให้พอดีกับส่วนหัวที่ขยายใหญ่ขึ้น */
+            padding-bottom: 40px;
+        }
+
+        /* ------------------------------------
+           1. ส่วนหัวลอยติดจอ (Fixed Header เต็มจอคอม)
+        ------------------------------------ */
+        #fixed-widget {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 210px;
+            background-color: rgba(15, 15, 20, 0.96);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            padding: 15px 40px;
+            border-bottom: 2px solid #2a2a38;
+            box-shadow: 0px 6px 25px rgba(0,0,0,0.7);
+        }
+
+        .widget-inner {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            max-width: 1300px;
+            margin: 0 auto;
+            gap: 24px;
+        }
+
+        /* ตัวละครขยายใหญ่สมส่วนกับจอคอม */
+        .char-container {
+            width: 130px;
+            height: 180px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            flex-shrink: 0;
+        }
+
+        .char-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0px 4px 10px rgba(0,0,0,0.6));
+        }
+
+        /* กล่องข้อความขยายกว้างเต็มพื้นที่ */
+        .dialogue-wrapper {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .chat-bubble {
+            background-color: rgba(30, 30, 45, 0.9);
+            border: 2px solid #8c7ae6;
+            border-radius: 16px;
+            padding: 16px 22px;
+            min-height: 115px;
+            position: relative;
+            box-shadow: inset 0 0 15px rgba(140, 122, 230, 0.15);
+        }
+
+        .chat-bubble::before {
+            content: '';
+            position: absolute;
+            left: -12px;
+            top: 42%;
+            border-width: 9px 12px 9px 0;
+            border-style: solid;
+            border-color: transparent #8c7ae6 transparent transparent;
+        }
+
+        .char-name {
+            font-size: 14px;
+            color: #d6a2e8;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        .dialogue-text {
+            font-size: 17px;
+            color: #ffffff;
+            margin-top: 6px;
+            line-height: 1.5;
+        }
+
+        /* แถบปรับ Opacity */
+        .opacity-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: #aaa;
+            padding-left: 4px;
+        }
+
+        .opacity-control input {
+            width: 180px;
+            accent-color: #8c7ae6;
+            cursor: pointer;
+        }
+
+        /* ------------------------------------
+           2. พื้นที่เนื้อหาหลัก (ขยายเต็มจอคอม)
+        ------------------------------------ */
+        .main-container {
+            width: 100%;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        .nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 24px;
+            background-color: #181824;
+            margin-bottom: 24px;
+            border-radius: 12px;
+            border: 1px solid #282838;
+        }
+
+        .nav-btn {
+            background-color: #8c7ae6;
+            color: white;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .nav-btn:hover {
+            background-color: #9c88ff;
+        }
+
+        .nav-btn:active {
+            transform: scale(0.97);
+        }
+
+        .nav-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #e0e0e0;
+        }
+
+        /* ------------------------------------
+           3. ส่วนเนื้อหา To-Do List
+        ------------------------------------ */
+        .input-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .input-group input {
+            flex-grow: 1;
+            padding: 15px 18px;
+            border-radius: 10px;
+            border: 1px solid #353548;
+            background-color: #1a1a26;
+            color: white;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .input-group input:focus {
+            border-color: #8c7ae6;
+        }
+
+        .input-group button {
+            background-color: #44bd32;
+            color: white;
+            border: none;
+            padding: 0 28px;
+            border-radius: 10px;
+            font-size: 22px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .input-group button:hover {
+            background-color: #4cd137;
+        }
+
+        /* จัดรายการ To-Do เป็นตาราง 2 คอลัมน์บนจอคอมให้เต็มพื้นที่ */
+        .task-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+            gap: 14px;
+        }
+
+        .task-item {
+            background-color: #1a1a26;
+            border-radius: 10px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-left: 5px solid #8c7ae6;
+            transition: transform 0.15s, background-color 0.2s;
+        }
+
+        .task-item:hover {
+            background-color: #202030;
+        }
+
+        .task-item.done {
+            border-left-color: #44bd32;
+            opacity: 0.75;
+        }
+
+        .task-item.done span {
+            text-decoration: line-through;
+            color: #888;
+        }
+
+        .task-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-size: 16px;
+        }
+
+        .task-left input[type="checkbox"] {
+            width: 22px;
+            height: 22px;
+            accent-color: #44bd32;
+            cursor: pointer;
+        }
+
+        .del-btn {
+            background: none;
+            border: none;
+            font-size: 19px;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .del-btn:hover {
+            opacity: 1;
+        }
+
+        #earthquake-section {
+            background-color: #181824;
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            border: 1px solid #282838;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. ส่วนหัวลอยติดจอ (ตัวละครซ้าย กล่องข้อความขวา ขยายเต็มจอคอม) -->
+    <div id="fixed-widget">
+        <div class="widget-inner">
+            <div class="char-container">
+                <img id="char-img" src="static/idle.png" alt="Character">
+            </div>
+            <div class="dialogue-wrapper">
+                <div class="chat-bubble" id="chat-box">
+                    <div class="char-name">Yuno</div>
+                    <div class="dialogue-text" id="dialogue-text">สวัสดีค่ะ! วันนี้มีอะไรให้ฉันช่วยจดไหมคะ?</div>
+                </div>
+                <div class="opacity-control">
+                    <span>ความเข้มกล่องข้อความ:</span>
+                    <input type="range" id="opacity-slider" min="0.2" max="1" step="0.05" value="0.9" oninput="changeOpacity(this.value)">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <!-- 2. แถบเลือกโหมด ซ้าย-ขวา -->
+        <div class="nav-bar">
+            <button class="nav-btn" onclick="prevMode()">◀️ ก่อนหน้า</button>
+            <span class="nav-title" id="mode-title"> To-Do List</span>
+            <button class="nav-btn" onclick="nextMode()">ถัดไป ▶️</button>
+        </div>
+
+        <!-- 3. พื้นที่เนื้อหาหลัก -->
+        <div id="todo-section">
+            <div class="input-group">
+                <input type="text" id="task-input" placeholder="พิมพ์รายการสิ่งที่ต้องทำ... (กด Enter หรือปุ่ม ^ เพื่อเพิ่ม)" onkeypress="handleKeyPress(event)">
+                <button onclick="addTask()" title="เพิ่มรายการ">^</button>
+            </div>
+            <ul class="task-list" id="task-list"></ul>
+        </div>
+
+        <div id="earthquake-section" style="display: none;">
+            <p style="color: #aaa; margin-bottom: 18px; font-size: 15px;">ระบบดึงข้อมูลรายงานแผ่นดินไหวล่าสุดแบบเรียลไทม์</p>
+            <button class="nav-btn" style="padding: 14px 28px; font-size: 16px;" onclick="checkEarthquake()">🌐 อัปเดตข้อมูลแผ่นดินไหวล่าสุด</button>
+        </div>
+    </div>
+
+    <script>
+        const modes = ["To-Do List", "แผ่นดินไหว"];
+        let currentModeIdx = 0;
+        let tasks = [];
+        let praiseTimer = null;
+
+        const IMG_IDLE = "static/idle.png";
+        const IMG_PRAISE = "static/praise.png";
+        const IMG_ALERT = "static/alert.png";
+
+        function changeOpacity(val) {
+            document.getElementById('chat-box').style.backgroundColor = `rgba(30, 30, 45, ${val})`;
+        }
+
+        function setDialogue(text, imgPath) {
+            document.getElementById('dialogue-text').innerText = text;
+            if(imgPath) {
+                document.getElementById('char-img').src = imgPath;
+            }
+        }
+
+        function updateModeUI() {
+            document.getElementById('mode-title').innerText = modes[currentModeIdx];
+            if (currentModeIdx === 0) {
+                document.getElementById('todo-section').style.display = 'block';
+                document.getElementById('earthquake-section').style.display = 'none';
+            } else {
+                document.getElementById('todo-section').style.display = 'none';
+                document.getElementById('earthquake-section').style.display = 'block';
+                checkEarthquake();
+            }
+        }
+
+        function prevMode() {
+            currentModeIdx = (currentModeIdx - 1 + modes.length) % modes.length;
+            updateModeUI();
+        }
+
+        function nextMode() {
+            currentModeIdx = (currentModeIdx + 1) % modes.length;
+            updateModeUI();
+        }
+
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') {
+                addTask();
+            }
+        }
+
+        function addTask() {
+            const input = document.getElementById('task-input');
+            const val = input.value.trim();
+            if (val) {
+                tasks.push({ text: val, done: false });
+                input.value = '';
+                renderTasks();
+                setDialogue(`จดรายการ "${val}" เรียบร้อยแล้วค่ะ!`, IMG_IDLE);
+            }
+        }
+
+        function toggleTask(idx) {
+            tasks[idx].done = !tasks[idx].done;
+            renderTasks();
+
+            if (tasks[idx].done) {
+                setDialogue("เก่งมากเลยค่ะ! ทำสำเร็จไปอีกอย่างแล้วนะ 👍✨", IMG_PRAISE);
+                
+                clearTimeout(praiseTimer);
+                praiseTimer = setTimeout(() => {
+                    setDialogue("สู้ๆ กับงานที่เหลือต่อนะคะ!", IMG_IDLE);
+                }, 3000);
+            } else {
+                setDialogue("ยกเลิกการเช็คแล้ว สู้ๆ นะคะ", IMG_IDLE);
+            }
+        }
+
+        function deleteTask(idx) {
+            const removed = tasks.splice(idx, 1);
+            renderTasks();
+            setDialogue(`ลบรายการ "${removed[0].text}" แล้วค่ะ`, IMG_IDLE);
+        }
+
+        function renderTasks() {
+            const listEl = document.getElementById('task-list');
+            listEl.innerHTML = '';
+            tasks.forEach((task, idx) => {
+                const li = document.createElement('li');
+                li.className = `task-item ${task.done ? 'done' : ''}`;
+                li.innerHTML = `
+                    <div class="task-left">
+                        <input type="checkbox" ${task.done ? 'checked' : ''} onchange="toggleTask(${idx})">
+                        <span>${task.text}</span>
+                    </div>
+                    <button class="del-btn" onclick="deleteTask(${idx})" title="ลบรายการ">🗑️</button>
+                `;
+                listEl.appendChild(li);
+            });
+        }
+
+       async function checkEarthquake() {
+            setDialogue("กำลังดึงข้อมูลแผ่นดินไหวล่าสุด...", IMG_ALERT);
+            try {
+                const res = await fetch("https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&limit=1");
+                const data = await res.json();
+                if (data.features && data.features.length > 0) {
+                    const place = data.features[0].properties.place;
+                    const mag = data.features[0].properties.mag;
+                    setDialogue(`รายงานแผ่นดินไหวล่าสุด: ขนาด ${mag} Mv ที่ ${place}`, IMG_ALERT);
+
+                    clearTimeout(praiseTimer);
+                    praiseTimer = setTimeout(() => {
+                        document.getElementById('char-img').src = IMG_IDLE;
+                    }, 3000);
+                } else {
+                    setDialogue("ไม่พบรายงานแผ่นดินไหวล่าสุดค่ะ", IMG_IDLE);
+                }
+            } catch (e) {
+                setDialogue("ไม่สามารถดึงข้อมูลแผ่นดินไหวได้ในขณะนี้", IMG_IDLE);
+            }
+        }
+    </script>
+</body>
+</html>
