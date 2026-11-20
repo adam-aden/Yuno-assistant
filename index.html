@@ -107,6 +107,25 @@
         }
 
         /* แถบปรับ Opacity */
+        .extra-options-toggle {
+            align-self: flex-start;
+            padding: 0 4px;
+            border: 0;
+            background: transparent;
+            color: #aaa;
+            font-size: 22px;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+        .extra-options-toggle:hover {
+            color: #ffffff;
+        }
+
+        .extra-options[hidden] {
+            display: none;
+        }
+
         .opacity-control {
             display: flex;
             align-items: center;
@@ -349,9 +368,13 @@
                     <div class="char-name">Yuno</div>
                     <div class="dialogue-text" id="dialogue-text">สวัสดีค่ะ! วันนี้มีอะไรให้ฉันช่วยจดไหมคะ?</div>
                 </div>
-                <div class="opacity-control">
-                    <span>ความเข้มกล่องข้อความ:</span>
-                    <input type="range" id="opacity-slider" min="0.2" max="1" step="0.05" value="0.9" oninput="changeOpacity(this.value)">
+                <button type="button" class="extra-options-toggle" id="extra-options-toggle"
+                    onclick="toggleExtraOptions()" aria-label="แสดงตัวเลือกเสริม" aria-expanded="false">&gt;</button>
+                <div class="extra-options" id="extra-options" hidden>
+                    <div class="opacity-control">
+                        <span>ความเข้มกล่องข้อความ:</span>
+                        <input type="range" id="opacity-slider" min="0.2" max="1" step="0.05" value="0.9" oninput="changeOpacity(this.value)">
+                    </div>
                 </div>
             </div>
         </div>
@@ -495,6 +518,16 @@
             }
             tasks = data || [];
             renderTasks();
+        }
+
+        function toggleExtraOptions() {
+            const panel = document.getElementById("extra-options");
+            const button = document.getElementById("extra-options-toggle");
+            const isOpening = panel.hidden;
+            panel.hidden = !isOpening;
+            button.textContent = isOpening ? "<" : ">";
+            button.setAttribute("aria-expanded", String(isOpening));
+            button.setAttribute("aria-label", isOpening ? "ซ่อนตัวเลือกเสริม" : "แสดงตัวเลือกเสริม");
         }
 
         function changeOpacity(val) {
