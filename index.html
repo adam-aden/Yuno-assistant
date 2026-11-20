@@ -107,8 +107,15 @@
         }
 
         /* แถบปรับ Opacity */
+        .extra-options-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: nowrap;
+        }
+
         .extra-options-toggle {
-            align-self: flex-start;
+            flex: 0 0 auto;
             padding: 0 4px;
             border: 0;
             background: transparent;
@@ -120,6 +127,11 @@
 
         .extra-options-toggle:hover {
             color: #ffffff;
+        }
+
+        .extra-options {
+            display: flex;
+            align-items: center;
         }
 
         .extra-options[hidden] {
@@ -368,12 +380,14 @@
                     <div class="char-name">Yuno</div>
                     <div class="dialogue-text" id="dialogue-text">สวัสดีค่ะ! วันนี้มีอะไรให้ฉันช่วยจดไหมคะ?</div>
                 </div>
-                <button type="button" class="extra-options-toggle" id="extra-options-toggle"
-                    onclick="toggleExtraOptions()" aria-label="แสดงตัวเลือกเสริม" aria-expanded="false">&gt;</button>
-                <div class="extra-options" id="extra-options" hidden>
-                    <div class="opacity-control">
-                        <span>ความเข้มกล่องข้อความ:</span>
-                        <input type="range" id="opacity-slider" min="0.2" max="1" step="0.05" value="0.9" oninput="changeOpacity(this.value)">
+                <div class="extra-options-container">
+                    <button type="button" class="extra-options-toggle" id="extra-options-toggle"
+                        onclick="toggleExtraOptions()" aria-label="แสดงตัวเลือกเสริม" aria-expanded="false">&gt;</button>
+                    <div class="extra-options" id="extra-options" hidden>
+                        <div class="opacity-control">
+                            <span>ความเข้มกล่องข้อความ:</span>
+                            <input type="range" id="opacity-slider" min="0.2" max="1" step="0.05" value="0.9" oninput="changeOpacity(this.value)">
+                        </div>
                     </div>
                 </div>
             </div>
