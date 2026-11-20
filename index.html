@@ -133,14 +133,35 @@
         }
 
         .nav-bar {
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
             align-items: center;
+            gap: 8px;
             padding: 14px 24px;
             background-color: #181824;
             margin-bottom: 24px;
             border-radius: 12px;
             border: 1px solid #282838;
+        }
+
+        /* ยึดปุ่มซ้าย ชื่อโหมดตรงกลาง และปุ่มขวาไว้คนละตำแหน่ง */
+        .nav-bar > .nav-btn:first-child {
+            grid-column: 1;
+            grid-row: 1;
+            justify-self: start;
+        }
+
+        .nav-title {
+            grid-column: 2;
+            grid-row: 1;
+            justify-self: center;
+            text-align: center;
+        }
+
+        .nav-bar > .nav-btn:nth-of-type(2) {
+            grid-column: 3;
+            grid-row: 1;
+            justify-self: end;
         }
 
         .nav-btn {
@@ -277,8 +298,22 @@
         .auth-actions button, #signout-btn { padding: 11px 18px; border: 0; border-radius: 8px; color: white; background: #8c7ae6; font-weight: bold; cursor: pointer; }
         .auth-actions button.secondary { background: #353548; }
         #auth-message { min-height: 24px; margin-top: 14px; color: #d6a2e8; overflow-wrap: anywhere; }
-        #user-email { color: #aaa; font-size: 13px; margin-left: auto; }
-        #signout-btn { background: #a34f68; padding: 9px 14px; }
+        #user-email {
+            grid-column: 2;
+            grid-row: 2;
+            justify-self: end;
+            color: #aaa;
+            font-size: 13px;
+            margin-left: 0;
+            overflow-wrap: anywhere;
+        }
+        #signout-btn {
+            grid-column: 3;
+            grid-row: 2;
+            justify-self: end;
+            background: #a34f68;
+            padding: 9px 14px;
+        }
         @media (max-width: 600px) {
             .main-container { padding: 0 14px; }
             .task-list { grid-template-columns: 1fr; }
