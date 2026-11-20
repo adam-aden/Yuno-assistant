@@ -269,6 +269,29 @@
             opacity: 1;
         }
 
+        .auth-panel { max-width: 560px; margin: 0 auto 24px; padding: 28px; background: #181824; border: 1px solid #282838; border-radius: 12px; }
+        .auth-panel h2 { margin-bottom: 8px; }
+        .auth-panel p { color: #aaa; line-height: 1.5; margin-bottom: 18px; }
+        .auth-panel input { display: block; width: 100%; margin-bottom: 12px; padding: 13px 15px; color: white; background: #1a1a26; border: 1px solid #353548; border-radius: 8px; font-size: 15px; }
+        .auth-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        .auth-actions button, #signout-btn { padding: 11px 18px; border: 0; border-radius: 8px; color: white; background: #8c7ae6; font-weight: bold; cursor: pointer; }
+        .auth-actions button.secondary { background: #353548; }
+        #auth-message { min-height: 24px; margin-top: 14px; color: #d6a2e8; overflow-wrap: anywhere; }
+        #user-email { color: #aaa; font-size: 13px; margin-left: auto; }
+        #signout-btn { background: #a34f68; padding: 9px 14px; }
+        @media (max-width: 600px) {
+            .main-container { padding: 0 14px; }
+            .task-list { grid-template-columns: 1fr; }
+            #fixed-widget { padding: 10px 14px; }
+            .char-container { width: 86px; height: 150px; }
+            .chat-bubble { padding: 12px; min-height: 95px; }
+            .dialogue-text { font-size: 14px; }
+            .opacity-control input { width: 100px; }
+            .nav-bar { gap: 8px; padding: 12px; }
+            .nav-btn { padding: 9px 10px; }
+            #user-email { display: none; }
+        }
+
         #earthquake-section {
             background-color: #181824;
             border-radius: 12px;
@@ -305,10 +328,24 @@
             <button class="nav-btn" onclick="prevMode()">◀️ ก่อนหน้า</button>
             <span class="nav-title" id="mode-title"> To-Do List</span>
             <button class="nav-btn" onclick="nextMode()">ถัดไป ▶️</button>
+            <span id="user-email"></span>
+            <button id="signout-btn" onclick="signOut()" style="display: none;">ออกจากระบบ</button>
         </div>
 
+        <section id="auth-panel" class="auth-panel" style="display: none;">
+            <h2>เข้าสู่ระบบ Yuno</h2>
+            <p>สมัครสมาชิกหรือเข้าสู่ระบบเพื่อบันทึกรายการ To-Do ไว้ในบัญชีของคุณ</p>
+            <input type="email" id="auth-email" placeholder="อีเมล" autocomplete="email">
+            <input type="password" id="auth-password" placeholder="รหัสผ่าน (อย่างน้อย 6 ตัวอักษร)" minlength="6" autocomplete="current-password">
+            <div class="auth-actions">
+                <button type="button" onclick="signIn()">เข้าสู่ระบบ</button>
+                <button type="button" class="secondary" onclick="signUp()">สมัครสมาชิก</button>
+            </div>
+            <div id="auth-message" role="status" aria-live="polite"></div>
+        </section>
+
         <!-- 3. พื้นที่เนื้อหาหลัก -->
-        <div id="todo-section">
+        <div id="todo-section" style="display: none;">
             <div class="input-group">
                 <input type="text" id="task-input" placeholder="พิมพ์รายการสิ่งที่ต้องทำ... (กด Enter หรือปุ่ม ^ เพื่อเพิ่ม)" onkeypress="handleKeyPress(event)">
                 <button onclick="addTask()" title="เพิ่มรายการ">^</button>
@@ -322,15 +359,108 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        // ใช้ Publishable key สำหรับหน้าเว็บเท่านั้น ห้ามนำ Secret/service_role key มาใส่
+        const SUPABASE_URL = "https://pnwekgkfutzjiwyzpjwd.supabase.co";
+        const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_j2NxMLThJzH9dx1d7EfWfw_6uKfiD30";
+        let supabaseClient = null;
+        let currentUser = null;
+
         const modes = ["To-Do List", "แผ่นดินไหว"];
         let currentModeIdx = 0;
-        let tasks = [];
+        let tasks = []; // รายการที่โหลดจากฐานข้อมูลของผู้ใช้ปัจจุบัน
         let praiseTimer = null;
 
         const IMG_IDLE = "static/idle.png";
         const IMG_PRAISE = "static/praise.png";
         const IMG_ALERT = "static/alert.png";
+
+        // เชื่อมต่อ Supabase และตรวจสอบว่ามี session จากครั้งก่อนหรือไม่
+        async function initializeSupabase() {
+            if (!window.supabase) {
+                document.getElementById("auth-panel").style.display = "block";
+                showAuthMessage("โหลด Supabase ไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ตแล้วรีเฟรช");
+                return;
+            }
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+            const { data, error } = await supabaseClient.auth.getSession();
+            if (error) {
+                document.getElementById("auth-panel").style.display = "block";
+                showAuthMessage("ตรวจสอบสถานะเข้าสู่ระบบไม่สำเร็จ: " + error.message);
+                return;
+            }
+            await handleAuthSession(data.session);
+            // ฟังการเปลี่ยนแปลง Login, Logout และ session หมดอายุ
+            supabaseClient.auth.onAuthStateChange((_event, session) => {
+                setTimeout(() => handleAuthSession(session), 0);
+            });
+        }
+
+        // ตั้งค่าหน้าจอตามบัญชีที่ Login และโหลดงานของบัญชีนั้น
+        async function handleAuthSession(session) {
+            currentUser = session ? session.user : null;
+            document.getElementById("user-email").textContent = currentUser ? currentUser.email : "";
+            updateAuthUI();
+            if (currentUser) await loadTasks();
+            else { tasks = []; renderTasks(); }
+        }
+
+        // เลือกแสดงกล่อง Login หรือรายการ To-Do ตามสถานะผู้ใช้
+        function updateAuthUI() {
+            const isTodoMode = currentModeIdx === 0;
+            document.getElementById("auth-panel").style.display = isTodoMode && !currentUser ? "block" : "none";
+            document.getElementById("todo-section").style.display = isTodoMode && currentUser ? "block" : "none";
+            document.getElementById("signout-btn").style.display = currentUser ? "inline-block" : "none";
+        }
+
+        // แสดงข้อความแจ้งสถานะและข้อผิดพลาดในกล่อง Login
+        function showAuthMessage(message) {
+            document.getElementById("auth-message").textContent = message;
+        }
+
+        // สมัครสมาชิกใหม่ด้วยอีเมลและรหัสผ่าน
+        async function signUp() {
+            const email = document.getElementById("auth-email").value.trim();
+            const password = document.getElementById("auth-password").value;
+            if (!email || !password) return showAuthMessage("กรุณากรอกอีเมลและรหัสผ่านก่อนค่ะ");
+            if (password.length < 6) return showAuthMessage("รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษรค่ะ");
+            showAuthMessage("กำลังสมัครสมาชิก...");
+            const { data, error } = await supabaseClient.auth.signUp({ email, password });
+            if (error) return showAuthMessage("สมัครสมาชิกไม่สำเร็จ: " + error.message);
+            if (!data.session) showAuthMessage("สมัครสมาชิกแล้วค่ะ กรุณาเปิดอีเมลและกดลิงก์ยืนยันก่อนเข้าสู่ระบบ");
+            else showAuthMessage("สมัครสมาชิกสำเร็จ กำลังเข้าสู่ระบบ...");
+        }
+
+        // เข้าสู่ระบบด้วยอีเมลและรหัสผ่านที่สมัครไว้
+        async function signIn() {
+            const email = document.getElementById("auth-email").value.trim();
+            const password = document.getElementById("auth-password").value;
+            if (!email || !password) return showAuthMessage("กรุณากรอกอีเมลและรหัสผ่านก่อนค่ะ");
+            showAuthMessage("กำลังเข้าสู่ระบบ...");
+            const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+            if (error) return showAuthMessage("เข้าสู่ระบบไม่สำเร็จ: " + error.message);
+            showAuthMessage("เข้าสู่ระบบสำเร็จค่ะ");
+        }
+
+        // ออกจากระบบผ่าน Supabase Auth
+        async function signOut() {
+            const { error } = await supabaseClient.auth.signOut();
+            if (error) showAuthMessage("ออกจากระบบไม่สำเร็จ: " + error.message);
+        }
+
+        // โหลดรายการจากตาราง tasks; RLS จำกัดข้อมูลให้เห็นเฉพาะเจ้าของบัญชี
+        async function loadTasks() {
+            const { data, error } = await supabaseClient.from("tasks")
+                .select("id, text, done, created_at").order("created_at", { ascending: true });
+            if (error) {
+                setDialogue("โหลดรายการไม่สำเร็จ กรุณาลองใหม่อีกครั้งค่ะ", IMG_ALERT);
+                console.error("loadTasks:", error);
+                return;
+            }
+            tasks = data || [];
+            renderTasks();
+        }
 
         function changeOpacity(val) {
             document.getElementById('chat-box').style.backgroundColor = `rgba(30, 30, 45, ${val})`;
@@ -345,14 +475,9 @@
 
         function updateModeUI() {
             document.getElementById('mode-title').innerText = modes[currentModeIdx];
-            if (currentModeIdx === 0) {
-                document.getElementById('todo-section').style.display = 'block';
-                document.getElementById('earthquake-section').style.display = 'none';
-            } else {
-                document.getElementById('todo-section').style.display = 'none';
-                document.getElementById('earthquake-section').style.display = 'block';
-                checkEarthquake();
-            }
+            updateAuthUI();
+            document.getElementById('earthquake-section').style.display = currentModeIdx === 1 ? 'block' : 'none';
+            if (currentModeIdx === 1) checkEarthquake();
         }
 
         function prevMode() {
@@ -371,52 +496,86 @@
             }
         }
 
-        function addTask() {
+        // เพิ่มรายการใหม่ลงฐานข้อมูลก่อน แล้วจึงแสดงบนหน้าจอ
+        async function addTask() {
             const input = document.getElementById('task-input');
             const val = input.value.trim();
-            if (val) {
-                tasks.push({ text: val, done: false });
-                input.value = '';
+            if (!val || !currentUser) return;
+            const { data, error } = await supabaseClient.from("tasks")
+                .insert({ user_id: currentUser.id, text: val, done: false })
+                .select("id, text, done, created_at").single();
+            if (error) {
+                setDialogue("บันทึกรายการไม่สำเร็จ กรุณาลองอีกครั้งค่ะ", IMG_ALERT);
+                console.error("addTask:", error);
+                return;
+            }
+            tasks.push(data);
+            input.value = '';
+            renderTasks();
+            setDialogue('จดรายการ "' + val + '" เรียบร้อยแล้วค่ะ!', IMG_IDLE);
+        }
+
+        // เปลี่ยนสถานะงานในฐานข้อมูล แล้วอัปเดตหน้าจอเมื่อบันทึกสำเร็จ
+        async function toggleTask(idx) {
+            const task = tasks[idx];
+            if (!task || !currentUser) return;
+            const nextDone = !task.done;
+            const { error } = await supabaseClient.from("tasks").update({ done: nextDone })
+                .eq("id", task.id).eq("user_id", currentUser.id);
+            if (error) {
+                setDialogue("อัปเดตสถานะไม่สำเร็จ กรุณาลองอีกครั้งค่ะ", IMG_ALERT);
+                console.error("toggleTask:", error);
                 renderTasks();
-                setDialogue(`จดรายการ "${val}" เรียบร้อยแล้วค่ะ!`, IMG_IDLE);
+                return;
             }
-        }
-
-        function toggleTask(idx) {
-            tasks[idx].done = !tasks[idx].done;
+            task.done = nextDone;
             renderTasks();
-
-            if (tasks[idx].done) {
+            if (task.done) {
                 setDialogue("เก่งมากเลยค่ะ! ทำสำเร็จไปอีกอย่างแล้วนะ 👍✨", IMG_PRAISE);
-                
                 clearTimeout(praiseTimer);
-                praiseTimer = setTimeout(() => {
-                    setDialogue("สู้ๆ กับงานที่เหลือต่อนะคะ!", IMG_IDLE);
-                }, 3000);
-            } else {
-                setDialogue("ยกเลิกการเช็คแล้ว สู้ๆ นะคะ", IMG_IDLE);
+                praiseTimer = setTimeout(() => setDialogue("สู้ๆ กับงานที่เหลือต่อนะคะ!", IMG_IDLE), 3000);
+            } else setDialogue("ยกเลิกการเช็คแล้ว สู้ๆ นะคะ", IMG_IDLE);
+        }
+
+        // ลบรายการจากฐานข้อมูลก่อน แล้วนำออกจากหน้าจอ
+        async function deleteTask(idx) {
+            const task = tasks[idx];
+            if (!task || !currentUser) return;
+            const { error } = await supabaseClient.from("tasks").delete()
+                .eq("id", task.id).eq("user_id", currentUser.id);
+            if (error) {
+                setDialogue("ลบรายการไม่สำเร็จ กรุณาลองอีกครั้งค่ะ", IMG_ALERT);
+                console.error("deleteTask:", error);
+                return;
             }
-        }
-
-        function deleteTask(idx) {
-            const removed = tasks.splice(idx, 1);
+            tasks.splice(idx, 1);
             renderTasks();
-            setDialogue(`ลบรายการ "${removed[0].text}" แล้วค่ะ`, IMG_IDLE);
+            setDialogue('ลบรายการ "' + task.text + '" แล้วค่ะ', IMG_IDLE);
         }
 
+        // วาดรายการงานใหม่; textContent ป้องกันข้อความงานถูกแปลเป็น HTML
         function renderTasks() {
             const listEl = document.getElementById('task-list');
             listEl.innerHTML = '';
             tasks.forEach((task, idx) => {
                 const li = document.createElement('li');
-                li.className = `task-item ${task.done ? 'done' : ''}`;
-                li.innerHTML = `
-                    <div class="task-left">
-                        <input type="checkbox" ${task.done ? 'checked' : ''} onchange="toggleTask(${idx})">
-                        <span>${task.text}</span>
-                    </div>
-                    <button class="del-btn" onclick="deleteTask(${idx})" title="ลบรายการ">🗑️</button>
-                `;
+                li.className = 'task-item ' + (task.done ? 'done' : '');
+                const left = document.createElement('div');
+                left.className = 'task-left';
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.checked = task.done;
+                checkbox.addEventListener('change', () => toggleTask(idx));
+                const taskText = document.createElement('span');
+                taskText.textContent = task.text;
+                left.append(checkbox, taskText);
+                const deleteButton = document.createElement('button');
+                deleteButton.className = 'del-btn';
+                deleteButton.type = 'button';
+                deleteButton.title = 'ลบรายการ';
+                deleteButton.textContent = '🗑️';
+                deleteButton.addEventListener('click', () => deleteTask(idx));
+                li.append(left, deleteButton);
                 listEl.appendChild(li);
             });
         }
@@ -442,6 +601,8 @@
                 setDialogue("ไม่สามารถดึงข้อมูลแผ่นดินไหวได้ในขณะนี้", IMG_IDLE);
             }
         }
+        // เริ่มเชื่อมต่อเมื่อ HTML โหลดครบแล้ว
+        initializeSupabase();
     </script>
 </body>
 </html>
