@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Yuno To-Do Companion (Desktop Edition)</title>
+</head>
+<body>
+
+    <!-- 1. ส่วนหัวลอยติดจอ (ตัวละครซ้าย กล่องข้อความขวา ขยายเต็มจอคอม) -->
+    <div id="fixed-widget">
+        <div class="widget-inner">
+            <div class="char-container">
+                <img id="char-img" src="static/idle.png" alt="Character">
+            </div>
+            <div class="dialogue-wrapper">
+                <div class="chat-bubble" id="chat-box">
+                    <div class="char-name">Yuno</div>
+                    <div class="dialogue-text" id="dialogue-text">สวัสดีค่ะ! วันนี้มีอะไรให้ฉันช่วยจดไหมคะ?</div>
+                </div>
+                <div class="extra-options-container">
+                    <button type="button" class="extra-options-toggle" id="extra-options-toggle"
+                        onclick="toggleExtraOptions()" aria-label="แสดงตัวเลือกเสริม" aria-expanded="false">&gt;</button>
+                    <div class="extra-options" id="extra-options" hidden>
+                        <div class="opacity-control">
+                            <span>ความเข้มกล่องข้อความ:</span>
+                            <input type="range" id="opacity-slider" min="0.2" max="1" step="0.05" value="0.9" oninput="changeOpacity(this.value)">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <!-- แถบนำทางหลัก: Yuno ซ้ายบน และเมนูด้านขวา -->
+        <div class="nav-bar">
+            <div class="brand">Yuno</div>
+            <div class="nav-links">
+                <button class="nav-btn active" id="nav-todo" onclick="showMode(0)" data-i18n="navTodo">To-Do</button>
+                <button class="nav-btn" id="nav-earthquake" onclick="showMode(1)" data-i18n="navDisaster">ภัยพิบัติ</button>
+                <button class="nav-btn" id="nav-settings" onclick="showMode(2)" data-i18n="navSettings">Settings</button>
+            </div>
+        </div>
+
+        <section id="auth-panel" class="auth-panel" style="display: none;">
+            <h2 data-i18n="loginTitle">เข้าสู่ระบบ Yuno</h2>
+            <p data-i18n="loginDescription">สมัครสมาชิกหรือเข้าสู่ระบบเพื่อบันทึกรายการ To-Do ไว้ในบัญชีของคุณ</p>
+            <input type="email" id="auth-email" placeholder="อีเมล" autocomplete="email">
+            <input type="password" id="auth-password" placeholder="รหัสผ่าน (อย่างน้อย 6 ตัวอักษร)" minlength="6" autocomplete="current-password">
+            <div class="auth-actions">
+                <button type="button" onclick="signIn()" data-i18n="loginButton">เข้าสู่ระบบ</button>
+                <button type="button" class="secondary" onclick="signUp()" data-i18n="signupButton">สมัครสมาชิก</button>
+            </div>
+            <div id="auth-message" role="status" aria-live="polite"></div>
+        </section>
+
+        <!-- 3. พื้นที่เนื้อหาหลัก -->
+        <div id="todo-section" style="display: none;">
+            <div class="input-group">
+                <input type="text" id="task-input" placeholder="พิมพ์รายการสิ่งที่ต้องทำ... (กด Enter หรือปุ่ม ^ เพื่อเพิ่ม)" onkeypress="handleKeyPress(event)">
+                <button onclick="addTask()" title="เพิ่มรายการ">^</button>
+            </div>
+            <ul class="task-list" id="task-list"></ul>
+        </div>
+
+        <div id="earthquake-section" style="display: none;">
+            <p id="earthquake-description" style="color: #aaa; margin-bottom: 18px; font-size: 15px;" data-i18n="earthquakeDescription">ระบบดึงข้อมูลรายงานแผ่นดินไหวล่าสุดแบบเรียลไทม์</p>
+            <button class="nav-btn" style="padding: 14px 28px; font-size: 16px;" onclick="checkEarthquake()" data-i18n="earthquakeRefresh">🌐 อัปเดตข้อมูลแผ่นดินไหวล่าสุด</button>
+        </div>
+
+        <!-- หน้า Settings แยกจากหน้า To-Do -->
+        <section id="settings-section">
+            <div class="settings-heading">
+                <h1 data-i18n="settingsTitle">Settings</h1>
+                <p data-i18n="settingsSubtitle">จัดการบัญชีและปรับแต่งประสบการณ์ใช้งาน Yuno</p>
+            </div>
+            <div class="settings-grid">
+                <section class="settings-card">
+                    <h2><span aria-hidden="true"></span><span data-i18n="accountTitle">บัญชีผู้ใช้</span></h2>
+                    <div class="account-row">
+                        <div class="account-avatar" aria-hidden="true">Y</div>
+                        <div class="account-details">
+                            <strong id="account-name" data-i18n="accountName">บัญชี Yuno</strong>
+                            <span id="account-email">—</span>
+                        </div>
+                        <span id="account-status" class="status-pill signed-out" data-i18n="signedOut">ยังไม่ได้เข้าสู่ระบบ</span>
+                    </div>
+                    <button id="settings-signout-btn" class="settings-signout" type="button" onclick="signOut()" style="display:none" data-i18n="signOut">ออกจากระบบ</button>
+                    <p id="account-hint" data-i18n="accountHint">เข้าสู่ระบบผ่านหน้า To-Do เพื่อซิงก์รายการงานกับบัญชีของคุณ</p>
+                </section>
+
+                <section class="settings-card">
+                    <h2><span aria-hidden="true"></span><span data-i18n="appearanceTitle">รูปลักษณ์</span></h2>
+                    <div class="setting-row">
+                        <div class="setting-copy">
+                            <strong data-i18n="themeLabel">ธีม</strong>
+                            <p data-i18n="themeDescription">เลือกธีมที่เหมาะกับคุณ</p>
+                        </div>
+                        <select id="theme-select" class="setting-select" aria-label="Theme" onchange="saveTheme(this.value)">
+                            <option value="system" data-i18n="themeSystem">ตามอุปกรณ์</option>
+                            <option value="light" data-i18n="themeLight">สว่าง</option>
+                            <option value="dark" data-i18n="themeDark">มืด</option>
+                        </select>
+                    </div>
+                </section>
+
+                <section class="settings-card">
+                    <h2><span aria-hidden="true"></span><span data-i18n="languageTitle">ภาษา</span></h2>
+                    <div class="setting-row">
+                        <div class="setting-copy">
+                            <strong data-i18n="languageLabel">ภาษาของแอป</strong>
+                            <p data-i18n="languageDescription">เลือกภาษาที่ใช้แสดงผล</p>
+                        </div>
+                        <select id="language-select" class="setting-select" aria-label="Language" onchange="saveLanguage(this.value)">
+                            <option value="th">ไทย</option>
+                            <option value="en">English</option>
+                        </select>
+                    </div>
+                </section>
+
+                <section class="settings-card">
+                    <h2><span aria-hidden="true"></span><span data-i18n="aboutTitle">เกี่ยวกับ Yuno</span></h2>
+                    <div class="setting-row">
+                        <div class="setting-copy">
+                            <strong data-i18n="versionLabel">เวอร์ชันแอป</strong>
+                            <p data-i18n="aboutDescription">ข้อมูลเวอร์ชันของแอปพลิเคชัน</p>
+                        </div>
+                        <span class="version-text">1.0.0</span>
+                    </div>
+                </section>
+            </div>
+        </section>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="script.js"></script>
+</body>
+</html>
