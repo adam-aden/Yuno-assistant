@@ -1,0 +1,21 @@
+{
+  "id": "./",
+  "name": "Yuno To-Do Companion",
+  "short_name": "Yuno",
+  "description": "ผู้ช่วยจัดการรายการงาน Yuno",
+  "lang": "th",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#171421",
+  "theme_color": "#8b6bd6",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "./static/yuno-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
