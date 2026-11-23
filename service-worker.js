@@ -33,21 +33,25 @@ self.addEventListener("fetch", event => {
   const request = event.request;
   const url = new URL(request.url);
 
-  // Do not intercept non-GET requests, cross-origin requests, or API traffic.
-  // Supabase authentication/tasks and live earthquake data must use the network.
+  // Never cache writes, third-party requests, or Supabase/API traffic.
   if (request.method !== "GET" || url.origin !== self.location.origin) return;
 
   if (request.mode === "navigate") {
     event.respondWith(
-      fetch(request)
-        .then(response => {
-          if (response.ok) {
-            const copy = response.clone();
-            caches.open(CACHE_NAME).then(cache => cache.put("./index.html", copy));
-          }
-          return response;
-        })
-        .catch(() => caches.match("./index.html"))
+      fetch(request).then(async response => {
+        if (response.ok) {
+          const cache = await caches.open(CACHE_NAME);
+          await cache.put("./index.html", response.clone());
+        }
+        return response;
+      }).catch(async () => {
+        const cachedPage = await caches.match("./index.html");
+        if (cachedPage) return cachedPage;
+        return new Response("Yuno is offline. Please reconnect to the internet.", {
+          status: 503,
+          headers: { "Content-Type": "text/plain; charset=utf-8" }
+        });
+      })
     );
     return;
   }
@@ -56,7 +60,7 @@ self.addEventListener("fetch", event => {
     caches.match(request).then(cached => {
       if (cached) return cached;
       return fetch(request).then(response => {
-        if (response.ok && url.origin === self.location.origin) {
+        if (response.ok) {
           const copy = response.clone();
           caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
         }
