@@ -495,11 +495,11 @@ function floodLevelLabel(level, language = "th") {
     })[Number(level)] || "ไม่มีข้อมูลระดับจังหวัด";
 }
 
-function formatFloodTime(value) {
-    if (!value) return "ไม่ระบุเวลา";
+function formatFloodTime(value, language = "th") {
+    if (!value) return language === "en" ? "Time unavailable" : "ไม่ระบุเวลา";
     const date = new Date(value);
-    if (Number.isNaN(date.getTime())) return "ไม่ระบุเวลา";
-    return date.toLocaleString("th-TH", {
+    if (Number.isNaN(date.getTime())) return language === "en" ? "Time unavailable" : "ไม่ระบุเวลา";
+    return date.toLocaleString(language === "en" ? "en-GB" : "th-TH", {
         day: "numeric", month: "short", hour: "2-digit", minute: "2-digit"
     });
 }
@@ -603,8 +603,8 @@ async function checkFlood() {
             fullLines.push(t.floodNoProvince);
         }
 
-        let nearestSummary = "ยังไม่มีข้อมูลสถานีวัดน้ำใกล้ตำแหน่ง";
-        let nearbySummary = "ไม่พบสถานีวัดน้ำที่มีข้อมูลปัจจุบัน";
+        let nearestSummary = t.floodNoNearbySummary;
+        let nearbySummary = t.floodNoFreshStation;
         if (location) {
             if (nearestTopStation) {
                 const props = nearestTopStation.feature.properties;
