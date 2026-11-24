@@ -787,3 +787,57 @@ body[data-theme="light"] .flood-monitor p,
 body[data-theme="light"] .flood-monitor small {
     color: #777287;
 }
+
+
+/* Flood report: compact chat summary + expandable full report */
+.flood-details-toggle {
+    padding: 10px 16px;
+    border: 1px solid #4b91a3;
+    border-radius: 9px;
+    color: #b9edf7;
+    background: #1b3942;
+    font-weight: 700;
+    cursor: pointer;
+}
+.flood-details-toggle[hidden],
+.flood-details[hidden] { display: none; }
+.flood-details {
+    width: 100%;
+    max-width: 760px;
+    margin-top: 8px;
+    padding: 18px;
+    text-align: left;
+    border: 1px solid #343449;
+    border-radius: 12px;
+    background: #14141f;
+}
+.flood-details h3 {
+    margin-bottom: 12px;
+    font-size: 16px;
+    color: #d6cfff;
+}
+.flood-details pre {
+    max-height: 320px;
+    overflow: auto;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    color: #e5e3ee;
+    font: inherit;
+    font-size: 14px;
+    line-height: 1.65;
+}
+body[data-theme="light"] .flood-details {
+    background: #faf9fd;
+    border-color: #e3e0ed;
+}
+body[data-theme="light"] .flood-details h3 { color: #51418f; }
+body[data-theme="light"] .flood-details pre { color: #29263a; }
+body[data-theme="light"] .flood-details-toggle {
+    color: #315d68;
+    background: #e7f6f9;
+    border-color: #b7dce4;
+}
+@media (max-width: 600px) {
+    .flood-details { padding: 14px; }
+    .flood-details pre { font-size: 13px; }
+}
