@@ -75,6 +75,12 @@
             <div class="flood-monitor">
                 <p>ตรวจสอบจังหวัดที่มีสถานการณ์น้ำท่วมและสถานีวัดน้ำที่อยู่ใกล้ตำแหน่งของคุณ</p>
                 <button class="nav-btn flood-button" type="button" onclick="checkFlood()">🌊 ตรวจสอบน้ำท่วมใกล้ฉัน</button>
+                <button class="flood-details-toggle" id="flood-details-toggle" type="button"
+                    onclick="toggleFloodDetails()" aria-expanded="false" hidden>📋 ดูรายงานฉบับเต็ม</button>
+                <section class="flood-details" id="flood-details" aria-live="polite" hidden>
+                    <h3>รายงานสถานการณ์น้ำท่วมฉบับเต็ม</h3>
+                    <pre id="flood-details-content"></pre>
+                </section>
                 <small>ระบบจะขออนุญาตใช้ตำแหน่ง GPS เฉพาะเมื่อคุณกดปุ่ม</small>
             </div>
         </div>
