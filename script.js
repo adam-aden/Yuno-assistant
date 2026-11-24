@@ -26,7 +26,48 @@ const translations = {
         emailPlaceholder: "อีเมล", passwordPlaceholder: "รหัสผ่าน (อย่างน้อย 6 ตัวอักษร)",
         loginButton: "เข้าสู่ระบบ", signupButton: "สมัครสมาชิก",
         taskPlaceholder: "พิมพ์รายการสิ่งที่ต้องทำ... (กด Enter หรือปุ่ม ^ เพื่อเพิ่ม)",
-        addTaskTitle: "เพิ่มรายการ", deleteTaskTitle: "ลบรายการ"
+        addTaskTitle: "เพิ่มรายการ", deleteTaskTitle: "ลบรายการ",
+        floodDescription: "ตรวจสอบจังหวัดที่มีสถานการณ์น้ำท่วมและสถานีวัดน้ำที่อยู่ใกล้ตำแหน่งของคุณ",
+        floodButton: "🌊 ตรวจสอบน้ำท่วมใกล้ฉัน",
+        floodGpsNote: "ระบบจะขออนุญาตใช้ตำแหน่ง GPS เฉพาะเมื่อคุณกดปุ่ม",
+        floodFullTitle: "รายงานสถานการณ์น้ำท่วมฉบับเต็ม",
+        floodViewDetails: "📋 ดูรายงานฉบับเต็ม",
+        floodHideDetails: "ซ่อนรายงานฉบับเต็ม",
+        floodLoading: "กำลังตรวจสอบสถานการณ์น้ำท่วมและขอตำแหน่ง GPS หากคุณอนุญาตค่ะ...",
+        floodTitle: "🌊 รายงานสถานการณ์น้ำท่วมประเทศไทย",
+        floodStale: "⚠️ ข้อมูลจังหวัดอาจไม่ใช่ข้อมูลล่าสุด โปรดตรวจสอบประกาศทางการ",
+        floodUpdated: "อัปเดตข้อมูลจังหวัด: ",
+        floodHighestProvince: "จังหวัดระดับสูงสุด: ",
+        floodAssessment: "ระดับประเมิน: ",
+        floodDetailsLabel: "รายละเอียด: ",
+        floodNoProvince: "ไม่พบจังหวัดที่ถูกจัดอยู่ในระดับเฝ้าระวังขึ้นไปจากข้อมูลชุดนี้",
+        floodGpsToStation: "จาก GPS ถึงสถานีวัดน้ำในจังหวัดระดับสูงสุดที่ใกล้ที่สุด: ",
+        floodNoTopStation: "ยังหาสถานีข้อมูลปัจจุบันในจังหวัดระดับสูงสุดเพื่อคำนวณระยะทางไม่ได้",
+        floodNearbyStation: "สถานีใกล้ตำแหน่งคุณ: ",
+        floodWaterLevel: "ค่าระดับน้ำสถานี: ",
+        floodNoPercent: "ไม่มีค่าเปอร์เซ็นต์",
+        floodStationStatus: "สถานะสถานี: ",
+        floodReadAt: " · เวลาอ่านค่า ",
+        floodNoGps: "ยังไม่ได้รับตำแหน่ง GPS จึงคำนวณระยะทางไม่ได้",
+        floodGpsHint: " · อนุญาต GPS เพื่อดูระยะทางจากตำแหน่งคุณได้",
+        floodNoNearbyStation: "ยังไม่มีข้อมูลสถานีวัดน้ำใกล้ตำแหน่ง",
+        floodNoFreshStation: "ไม่พบสถานีวัดน้ำที่มีข้อมูลปัจจุบัน",
+        floodNoStationData: "ไม่มีข้อมูลสถานี",
+        floodGpsDenied: "ไม่ได้อนุญาต GPS",
+        floodNearestDistance: "ระยะถึงสถานีในจังหวัดระดับสูงสุด: ",
+        floodSeeFull: "ดูรายงานฉบับเต็มเพื่อดูรายละเอียด",
+        floodNoLevel: "ไม่ทราบระดับน้ำ",
+        floodNoProvinceData: "⚠️ ข้อมูลจังหวัดอาจเก่า",
+        floodCritical: "วิกฤต",
+        floodWatch: "เฝ้าระวัง",
+        floodNormal: "ปกติ",
+        floodNoData: "ไม่มีข้อมูล",
+        floodDisclaimer: "หมายเหตุ: ระดับจังหวัดเป็นการประเมินของ Thailand Flood Watch ไม่ใช่ประกาศเตือนภัยทางการ และระยะทางเป็นเส้นตรงถึงสถานีวัดน้ำ ไม่ใช่ระยะทางเดินทาง",
+        floodError: "ขออภัยค่ะ ตอนนี้ดึงข้อมูลน้ำท่วมไม่ได้ กรุณาลองใหม่ภายหลัง และตรวจประกาศจาก ปภ. หรือหน่วยงานท้องถิ่นโดยตรงนะคะ",
+        floodDistanceUnit: " กม. ",
+        floodMeterUnit: " ม. ",
+        floodCapacity: "% ของความจุลำน้ำ"
+    
     },
     en: {
         navTodo: "To-Do", navDisaster: "Disaster", navSettings: "Settings",
@@ -46,7 +87,48 @@ const translations = {
         emailPlaceholder: "Email", passwordPlaceholder: "Password (at least 6 characters)",
         loginButton: "Sign in", signupButton: "Create account",
         taskPlaceholder: "Type a task... (Press Enter or ^ to add)",
-        addTaskTitle: "Add task", deleteTaskTitle: "Delete task"
+        addTaskTitle: "Add task", deleteTaskTitle: "Delete task",
+        floodDescription: "Check flood-affected provinces and nearby water-level stations.",
+        floodButton: "🌊 Check nearby flood conditions",
+        floodGpsNote: "Yuno only requests GPS access when you tap the button.",
+        floodFullTitle: "Full flood situation report",
+        floodViewDetails: "📋 View full report",
+        floodHideDetails: "Hide full report",
+        floodLoading: "Checking flood conditions. GPS access will be requested if you allow it...",
+        floodTitle: "🌊 Thailand flood situation report",
+        floodStale: "⚠️ Province data may be outdated. Please check official alerts.",
+        floodUpdated: "Province data updated: ",
+        floodHighestProvince: "Highest alert provinces: ",
+        floodAssessment: "Assessment: ",
+        floodDetailsLabel: "Details: ",
+        floodNoProvince: "No provinces are currently marked as watch level or above in this dataset.",
+        floodGpsToStation: "Distance from your GPS location to the nearest station in a highest-alert province: ",
+        floodNoTopStation: "No current station data is available in the highest-alert provinces to calculate distance.",
+        floodNearbyStation: "Nearest station to you: ",
+        floodWaterLevel: "Station water level: ",
+        floodNoPercent: "percentage unavailable",
+        floodStationStatus: "Station status: ",
+        floodReadAt: " · Reading time ",
+        floodNoGps: "GPS permission was not granted, so distance cannot be calculated.",
+        floodGpsHint: " · Allow GPS to see distances from your location.",
+        floodNoNearbyStation: "No nearby water-level station data is available.",
+        floodNoFreshStation: "No station with current data was found.",
+        floodNoStationData: "No station data",
+        floodGpsDenied: "GPS not allowed",
+        floodNearestDistance: "Distance to a station in a highest-alert province: ",
+        floodSeeFull: "View the full report for more details.",
+        floodNoLevel: "Water level unavailable",
+        floodNoProvinceData: "⚠️ Province data may be outdated",
+        floodCritical: "Critical",
+        floodWatch: "Watch",
+        floodNormal: "Normal",
+        floodNoData: "No data",
+        floodDisclaimer: "Note: Province-level alerts are assessments by Thailand Flood Watch, not official emergency warnings. Distances are straight-line distances to monitoring stations, not travel distances.",
+        floodError: "Sorry, flood data is unavailable right now. Please try again later and check official announcements from the Department of Disaster Prevention and Mitigation or local authorities.",
+        floodDistanceUnit: " km ",
+        floodMeterUnit: " m ",
+        floodCapacity: "% of river capacity"
+    
     }
 };
 
@@ -119,6 +201,7 @@ function updateAccountUI() {
 }
 let tasks = []; // รายการที่โหลดจากฐานข้อมูลของผู้ใช้ปัจจุบัน
 let praiseTimer = null;
+let floodIdleTimer = null;
 
 const IMG_IDLE = "static/idle.png";
 const IMG_PRAISE = "static/praise.png";
@@ -226,6 +309,7 @@ function changeOpacity(val) {
 }
 
 function setDialogue(text, imgPath) {
+    clearTimeout(floodIdleTimer);
     const dialogue = document.getElementById('dialogue-text');
     // Normalize escaped newline text from any feature into real line breaks.
     dialogue.textContent = String(text).replace(/\\n/g, "\n");
@@ -393,7 +477,8 @@ function getFloodLocation() {
     });
 }
 
-function floodLevelLabel(level) {
+function floodLevelLabel(level, language = "th") {
+    if (language === "en") return ({3: "Critical / overbank station", 2: "High alert", 1: "Watch", 0: "Normal"})[Number(level)] || "No province-level data";
     return ({
         3: "วิกฤต / มีสถานีล้นตลิ่ง",
         2: "เตือนภัยระดับสูง",
@@ -417,20 +502,31 @@ function toggleFloodDetails() {
     if (!panel || !button) return;
     const opening = panel.hidden;
     panel.hidden = !opening;
-    button.textContent = opening ? "ซ่อนรายงานฉบับเต็ม" : "📋 ดูรายงานฉบับเต็ม";
+    const t = translations[localStorage.getItem("yuno-language") || "th"];
+    button.textContent = opening ? t.floodHideDetails : t.floodViewDetails;
     button.setAttribute("aria-expanded", String(opening));
+}
+
+function scheduleFloodIdle() {
+    clearTimeout(floodIdleTimer);
+    floodIdleTimer = setTimeout(() => {
+        const character = document.getElementById("char-img");
+        if (character) character.src = IMG_IDLE;
+    }, 4000);
 }
 
 // ตรวจสถานการณ์น้ำท่วมจากข้อมูลจังหวัดและสถานีวัดน้ำ
 async function checkFlood() {
-    setDialogue("กำลังตรวจสอบสถานการณ์น้ำท่วมและขอตำแหน่ง GPS หากคุณอนุญาตค่ะ...", IMG_ALERT);
+    const lang = localStorage.getItem("yuno-language") === "en" ? "en" : "th";
+    const t = translations[lang];
+    setDialogue(t.floodLoading, IMG_ALERT);
 
     let location = null;
     let locationNote = "";
     try {
         location = await getFloodLocation();
     } catch (error) {
-        locationNote = "ยังไม่ได้รับตำแหน่ง GPS จึงคำนวณระยะทางไม่ได้";
+        locationNote = t.floodNoGps;
     }
 
     try {
@@ -483,20 +579,20 @@ async function checkFlood() {
         const updatedAt = provinceData.updated_at;
         const updatedMs = updatedAt ? new Date(updatedAt).getTime() : 0;
         const dataIsOld = !updatedMs || now - updatedMs > 6 * 60 * 60 * 1000;
-        const fullLines = ["🌊 รายงานสถานการณ์น้ำท่วมประเทศไทย"];
+        const fullLines = [t.floodTitle];
 
         fullLines.push(dataIsOld
-            ? "⚠️ ข้อมูลจังหวัดอาจไม่ใช่ข้อมูลล่าสุด โปรดตรวจสอบประกาศทางการ"
-            : "อัปเดตข้อมูลจังหวัด: " + formatFloodTime(updatedAt));
+            ? t.floodStale
+            : t.floodUpdated + formatFloodTime(updatedAt));
 
         if (topProvinces.length) {
             const names = topProvinces.slice(0, 3).map(p => p.name_th).join(", ");
-            fullLines.push("จังหวัดระดับสูงสุด: " + names);
-            fullLines.push("ระดับประเมิน: " + floodLevelLabel(topLevel));
+            fullLines.push(t.floodHighestProvince + names);
+            fullLines.push(t.floodAssessment + floodLevelLabel(topLevel, lang));
             const reasons = topProvinces[0].summary;
-            if (reasons) fullLines.push("รายละเอียด: " + reasons);
+            if (reasons) fullLines.push(t.floodDetailsLabel + reasons);
         } else {
-            fullLines.push("ไม่พบจังหวัดที่ถูกจัดอยู่ในระดับเฝ้าระวังขึ้นไปจากข้อมูลชุดนี้");
+            fullLines.push(t.floodNoProvince);
         }
 
         let nearestSummary = "ยังไม่มีข้อมูลสถานีวัดน้ำใกล้ตำแหน่ง";
@@ -504,50 +600,51 @@ async function checkFlood() {
         if (location) {
             if (nearestTopStation) {
                 const props = nearestTopStation.feature.properties;
-                fullLines.push("จาก GPS ถึงสถานีวัดน้ำในจังหวัดระดับสูงสุดที่ใกล้ที่สุด: " +
-                    nearestTopStation.distance.toFixed(1) + " กม. (" +
+                fullLines.push(t.floodGpsToStation +
+                    nearestTopStation.distance.toFixed(1) + t.floodDistanceUnit + "(" +
                     [props.name, props.amphoe, props.province].filter(Boolean).join(", ") + ")");
                 nearestSummary = nearestTopStation.distance.toFixed(1) + " กม. ถึงสถานีในจังหวัดระดับสูงสุด";
             } else {
-                fullLines.push("ยังหาสถานีข้อมูลปัจจุบันในจังหวัดระดับสูงสุดเพื่อคำนวณระยะทางไม่ได้");
+                fullLines.push(t.floodNoTopStation);
             }
             if (nearestAnyStation) {
                 const props = nearestAnyStation.feature.properties;
                 const stationName = [props.name, props.amphoe].filter(Boolean).join(", ");
-                fullLines.push("สถานีใกล้ตำแหน่งคุณ: " + stationName);
+                fullLines.push(t.floodNearbyStation + stationName);
                 nearbySummary = stationName || nearbySummary;
                 if (Number.isFinite(Number(props.value))) {
-                    fullLines.push("ค่าระดับน้ำสถานี: " + Number(props.value).toFixed(2) +
-                        " ม. · " + (Number.isFinite(Number(props.pct)) ? Number(props.pct).toFixed(1) + "% ของความจุลำน้ำ" : "ไม่มีค่าเปอร์เซ็นต์"));
+                    fullLines.push(t.floodWaterLevel + Number(props.value).toFixed(2) +
+                        t.floodMeterUnit + " · " + (Number.isFinite(Number(props.pct)) ? Number(props.pct).toFixed(1) + t.floodCapacity : t.floodNoPercent));
                 }
-                fullLines.push("สถานะสถานี: " + (props.status === "critical" ? "วิกฤต" :
-                    props.status === "watch" ? "เฝ้าระวัง" : "ปกติ") +
-                    " · เวลาอ่านค่า " + formatFloodTime(props.ts));
+                fullLines.push(t.floodStationStatus + (props.status === "critical" ? t.floodCritical :
+                    props.status === "watch" ? t.floodWatch : t.floodNormal) +
+                    t.floodReadAt + formatFloodTime(props.ts));
             }
         } else {
-            fullLines.push(locationNote + " · อนุญาต GPS เพื่อดูระยะทางจากตำแหน่งคุณได้");
+            fullLines.push(locationNote + t.floodGpsHint);
         }
 
-        fullLines.push("หมายเหตุ: ระดับจังหวัดเป็นการประเมินของ Thailand Flood Watch ไม่ใช่ประกาศเตือนภัยทางการ และระยะทางเป็นเส้นตรงถึงสถานีวัดน้ำ ไม่ใช่ระยะทางเดินทาง");
+        fullLines.push(t.floodDisclaimer);
 
         const provinceSummary = topProvinces.length
-            ? topProvinces.slice(0, 2).map(p => p.name_th).join(", ") + " · " + floodLevelLabel(topLevel)
-            : "ไม่พบจังหวัดระดับเฝ้าระวังขึ้นไป";
+            ? topProvinces.slice(0, 2).map(p => p.name_th).join(", ") + " · " + floodLevelLabel(topLevel, lang)
+            : t.floodNoProvince;
         const nearbyLevel = nearestAnyStation
-            ? (nearestAnyStation.feature.properties.status === "critical" ? "วิกฤต" :
-               nearestAnyStation.feature.properties.status === "watch" ? "เฝ้าระวัง" : "ปกติ")
-            : "ไม่มีข้อมูล";
+            ? (nearestAnyStation.feature.properties.status === "critical" ? t.floodCritical :
+               nearestAnyStation.feature.properties.status === "watch" ? t.floodWatch : t.floodNormal)
+            : t.floodNoData;
         const shortLines = [
             "🌊 จังหวัดระดับสูงสุด: " + provinceSummary,
-            "📍 สถานีใกล้คุณ: " + (nearestAnyStation ? nearbySummary : location ? "ไม่มีข้อมูลสถานี" : "ไม่ได้อนุญาต GPS"),
-            nearestTopStation ? "ระยะถึงสถานีในจังหวัดระดับสูงสุด: " + nearestSummary :
-                (dataIsOld ? "⚠️ ข้อมูลจังหวัดอาจเก่า" : "ดูรายงานฉบับเต็มเพื่อดูรายละเอียด")
+            "📍 สถานีใกล้คุณ: " + (nearestAnyStation ? nearbySummary : location ? t.floodNoStationData : t.floodGpsDenied),
+            nearestTopStation ? t.floodNearestDistance + nearestSummary :
+                (dataIsOld ? t.floodNoProvinceData : t.floodSeeFull)
         ];
         if (nearestAnyStation) {
             const p = nearestAnyStation.feature.properties;
-            shortLines[1] += " · " + (Number.isFinite(Number(p.value)) ? Number(p.value).toFixed(2) + " ม." : "ไม่ทราบระดับน้ำ") + " · " + nearbyLevel;
+            shortLines[1] += " · " + (Number.isFinite(Number(p.value)) ? Number(p.value).toFixed(2) + t.floodMeterUnit : t.floodNoLevel) + " · " + nearbyLevel;
         }
         setDialogue(shortLines.join("\n"), IMG_ALERT);
+        scheduleFloodIdle();
         const detail = document.getElementById("flood-details-content");
         const detailButton = document.getElementById("flood-details-toggle");
         const detailPanel = document.getElementById("flood-details");
@@ -555,7 +652,7 @@ async function checkFlood() {
             detail.textContent = fullLines.join("\n");
             detailPanel.hidden = true;
             detailButton.hidden = false;
-            detailButton.textContent = "📋 ดูรายงานฉบับเต็ม";
+            detailButton.textContent = t.floodViewDetails;
             detailButton.setAttribute("aria-expanded", "false");
         }
     } catch (error) {
@@ -564,7 +661,8 @@ async function checkFlood() {
         const detailPanel = document.getElementById("flood-details");
         if (detailButton) detailButton.hidden = true;
         if (detailPanel) detailPanel.hidden = true;
-        setDialogue("ขออภัยค่ะ ตอนนี้ดึงข้อมูลน้ำท่วมไม่ได้ กรุณาลองใหม่ภายหลัง และตรวจประกาศจาก ปภ. หรือหน่วยงานท้องถิ่นโดยตรงนะคะ", IMG_IDLE);
+        setDialogue(t.floodError, IMG_ALERT);
+        scheduleFloodIdle();
     }
 }
 
