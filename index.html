@@ -72,6 +72,11 @@
         <div id="earthquake-section" style="display: none;">
             <p id="earthquake-description" style="color: #aaa; margin-bottom: 18px; font-size: 15px;" data-i18n="earthquakeDescription">ระบบดึงข้อมูลรายงานแผ่นดินไหวล่าสุดแบบเรียลไทม์</p>
             <button class="nav-btn" style="padding: 14px 28px; font-size: 16px;" onclick="checkEarthquake()" data-i18n="earthquakeRefresh">🌐 อัปเดตข้อมูลแผ่นดินไหวล่าสุด</button>
+            <div class="flood-monitor">
+                <p>ตรวจสอบจังหวัดที่มีสถานการณ์น้ำท่วมและสถานีวัดน้ำที่อยู่ใกล้ตำแหน่งของคุณ</p>
+                <button class="nav-btn flood-button" type="button" onclick="checkFlood()">🌊 ตรวจสอบน้ำท่วมใกล้ฉัน</button>
+                <small>ระบบจะขออนุญาตใช้ตำแหน่ง GPS เฉพาะเมื่อคุณกดปุ่ม</small>
+            </div>
         </div>
 
         <!-- หน้า Settings แยกจากหน้า To-Do -->
