@@ -841,3 +841,10 @@ body[data-theme="light"] .flood-details-toggle {
     .flood-details { padding: 14px; }
     .flood-details pre { font-size: 13px; }
 }
+
+
+/* Keep multiline assistant messages readable on mobile and desktop. */
+#dialogue-text {
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+}
