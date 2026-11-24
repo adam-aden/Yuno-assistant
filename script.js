@@ -545,12 +545,12 @@ async function checkFlood() {
             const p = nearestAnyStation.feature.properties;
             shortLines[1] += " · " + (Number.isFinite(Number(p.value)) ? Number(p.value).toFixed(2) + " ม." : "ไม่ทราบระดับน้ำ") + " · " + nearbyLevel;
         }
-        setDialogue(shortLines.join("\\n"), IMG_ALERT);
+        setDialogue(shortLines.join("\n"), IMG_ALERT);
         const detail = document.getElementById("flood-details-content");
         const detailButton = document.getElementById("flood-details-toggle");
         const detailPanel = document.getElementById("flood-details");
         if (detail && detailButton && detailPanel) {
-            detail.textContent = fullLines.join("\\n");
+            detail.textContent = fullLines.join("\n");
             detailPanel.hidden = true;
             detailButton.hidden = false;
             detailButton.textContent = "📋 ดูรายงานฉบับเต็ม";
