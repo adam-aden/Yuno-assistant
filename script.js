@@ -226,7 +226,9 @@ function changeOpacity(val) {
 }
 
 function setDialogue(text, imgPath) {
-    document.getElementById('dialogue-text').innerText = text;
+    const dialogue = document.getElementById('dialogue-text');
+    // Normalize escaped newline text from any feature into real line breaks.
+    dialogue.textContent = String(text).replace(/\\n/g, "\n");
     if (imgPath) {
         document.getElementById('char-img').src = imgPath;
     }
