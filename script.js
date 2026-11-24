@@ -65,6 +65,10 @@ const translations = {
         floodDisclaimer: "หมายเหตุ: ระดับจังหวัดเป็นการประเมินของ Thailand Flood Watch ไม่ใช่ประกาศเตือนภัยทางการ และระยะทางเป็นเส้นตรงถึงสถานีวัดน้ำ ไม่ใช่ระยะทางเดินทาง",
         floodError: "ขออภัยค่ะ ตอนนี้ดึงข้อมูลน้ำท่วมไม่ได้ กรุณาลองใหม่ภายหลัง และตรวจประกาศจาก ปภ. หรือหน่วยงานท้องถิ่นโดยตรงนะคะ",
         floodDistanceUnit: " กม. ",
+        floodNoNearbySummary: "ยังไม่มีข้อมูลสถานีวัดน้ำใกล้ตำแหน่ง",
+        floodDistanceSummary: " กม. ถึงสถานีในจังหวัดระดับสูงสุด",
+        floodShortProvincePrefix: "🌊 จังหวัดระดับสูงสุด: ",
+        floodShortStationPrefix: "📍 สถานีใกล้คุณ: ",
         floodMeterUnit: " ม. ",
         floodCapacity: "% ของความจุลำน้ำ"
     
@@ -126,6 +130,10 @@ const translations = {
         floodDisclaimer: "Note: Province-level alerts are assessments by Thailand Flood Watch, not official emergency warnings. Distances are straight-line distances to monitoring stations, not travel distances.",
         floodError: "Sorry, flood data is unavailable right now. Please try again later and check official announcements from the Department of Disaster Prevention and Mitigation or local authorities.",
         floodDistanceUnit: " km ",
+        floodNoNearbySummary: "No nearby water-level station data is available.",
+        floodDistanceSummary: " km to a station in a highest-alert province",
+        floodShortProvincePrefix: "🌊 Highest-alert provinces: ",
+        floodShortStationPrefix: "📍 Nearest station: ",
         floodMeterUnit: " m ",
         floodCapacity: "% of river capacity"
     
@@ -583,7 +591,7 @@ async function checkFlood() {
 
         fullLines.push(dataIsOld
             ? t.floodStale
-            : t.floodUpdated + formatFloodTime(updatedAt));
+            : t.floodUpdated + formatFloodTime(updatedAt, lang));
 
         if (topProvinces.length) {
             const names = topProvinces.slice(0, 3).map(p => p.name_th).join(", ");
@@ -603,7 +611,7 @@ async function checkFlood() {
                 fullLines.push(t.floodGpsToStation +
                     nearestTopStation.distance.toFixed(1) + t.floodDistanceUnit + "(" +
                     [props.name, props.amphoe, props.province].filter(Boolean).join(", ") + ")");
-                nearestSummary = nearestTopStation.distance.toFixed(1) + " กม. ถึงสถานีในจังหวัดระดับสูงสุด";
+                nearestSummary = nearestTopStation.distance.toFixed(1) + t.floodDistanceSummary;
             } else {
                 fullLines.push(t.floodNoTopStation);
             }
@@ -618,7 +626,7 @@ async function checkFlood() {
                 }
                 fullLines.push(t.floodStationStatus + (props.status === "critical" ? t.floodCritical :
                     props.status === "watch" ? t.floodWatch : t.floodNormal) +
-                    t.floodReadAt + formatFloodTime(props.ts));
+                    t.floodReadAt + formatFloodTime(props.ts, lang));
             }
         } else {
             fullLines.push(locationNote + t.floodGpsHint);
@@ -634,8 +642,8 @@ async function checkFlood() {
                nearestAnyStation.feature.properties.status === "watch" ? t.floodWatch : t.floodNormal)
             : t.floodNoData;
         const shortLines = [
-            "🌊 จังหวัดระดับสูงสุด: " + provinceSummary,
-            "📍 สถานีใกล้คุณ: " + (nearestAnyStation ? nearbySummary : location ? t.floodNoStationData : t.floodGpsDenied),
+            t.floodShortProvincePrefix + provinceSummary,
+            t.floodShortStationPrefix + (nearestAnyStation ? nearbySummary : location ? t.floodNoStationData : t.floodGpsDenied),
             nearestTopStation ? t.floodNearestDistance + nearestSummary :
                 (dataIsOld ? t.floodNoProvinceData : t.floodSeeFull)
         ];
