@@ -755,3 +755,35 @@ body[data-theme="light"] .auth-panel p {
         width: 100%;
     }
 }
+
+/* Flood Monitor */
+.flood-monitor {
+    margin-top: 22px;
+    padding-top: 20px;
+    border-top: 1px solid #353548;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+.flood-monitor p,
+.flood-monitor small {
+    color: #aaa;
+    line-height: 1.5;
+    text-align: center;
+}
+.flood-monitor small {
+    font-size: 12px;
+}
+.flood-button {
+    padding: 14px 28px;
+    font-size: 16px;
+    background: #287c91;
+}
+.flood-button:hover {
+    background: #3295aa;
+}
+body[data-theme="light"] .flood-monitor p,
+body[data-theme="light"] .flood-monitor small {
+    color: #777287;
+}
