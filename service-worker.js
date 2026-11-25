@@ -1,4 +1,4 @@
-const CACHE_NAME = "yuno-pwa-v5";
+const CACHE_NAME = "yuno-pwa-v6";
 const APP_SHELL = [
   "./",
   "./index.html",
