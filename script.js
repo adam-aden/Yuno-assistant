@@ -67,8 +67,8 @@ const translations = {
         floodDistanceUnit: " กม. ",
         floodNoNearbySummary: "ยังไม่มีข้อมูลสถานีวัดน้ำใกล้ตำแหน่ง",
         floodDistanceSummary: " กม. ถึงสถานีในจังหวัดระดับสูงสุด",
-        floodShortProvincePrefix: "🌊 จังหวัดระดับสูงสุด: ",
-        floodShortStationPrefix: "📍 สถานีใกล้คุณ: ",
+        floodShortProvincePrefix: "จังหวัดระดับสูงสุด: ",
+        floodShortStationPrefix: "สถานีใกล้คุณ: ",
         floodMeterUnit: " ม. ",
         floodCapacity: "% ของความจุลำน้ำ"
     
@@ -132,8 +132,8 @@ const translations = {
         floodDistanceUnit: " km ",
         floodNoNearbySummary: "No nearby water-level station data is available.",
         floodDistanceSummary: " km to a station in a highest-alert province",
-        floodShortProvincePrefix: "🌊 Highest-alert provinces: ",
-        floodShortStationPrefix: "📍 Nearest station: ",
+        floodShortProvincePrefix: "Highest-alert provinces: ",
+        floodShortStationPrefix: "Nearest station: ",
         floodMeterUnit: " m ",
         floodCapacity: "% of river capacity"
     
