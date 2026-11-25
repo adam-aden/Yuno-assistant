@@ -28,14 +28,14 @@ const translations = {
         taskPlaceholder: "พิมพ์รายการสิ่งที่ต้องทำ... (กด Enter หรือปุ่ม ^ เพื่อเพิ่ม)",
         addTaskTitle: "เพิ่มรายการ", deleteTaskTitle: "ลบรายการ",
         floodDescription: "ตรวจสอบจังหวัดที่มีสถานการณ์น้ำท่วมและสถานีวัดน้ำที่อยู่ใกล้ตำแหน่งของคุณ",
-        floodButton: "🌊 ตรวจสอบน้ำท่วมใกล้ฉัน",
+        floodButton: "ตรวจสอบน้ำท่วมใกล้ฉัน",
         floodGpsNote: "ระบบจะขออนุญาตใช้ตำแหน่ง GPS เฉพาะเมื่อคุณกดปุ่ม",
         floodFullTitle: "รายงานสถานการณ์น้ำท่วมฉบับเต็ม",
-        floodViewDetails: "📋 ดูรายงานฉบับเต็ม",
+        floodViewDetails: "ดูรายงานฉบับเต็ม",
         floodHideDetails: "ซ่อนรายงานฉบับเต็ม",
         floodLoading: "กำลังตรวจสอบสถานการณ์น้ำท่วมและขอตำแหน่ง GPS หากคุณอนุญาตค่ะ...",
-        floodTitle: "🌊 รายงานสถานการณ์น้ำท่วมประเทศไทย",
-        floodStale: "⚠️ ข้อมูลจังหวัดอาจไม่ใช่ข้อมูลล่าสุด โปรดตรวจสอบประกาศทางการ",
+        floodTitle: "รายงานสถานการณ์น้ำท่วมประเทศไทย",
+        floodStale: "ข้อมูลจังหวัดอาจไม่ใช่ข้อมูลล่าสุด โปรดตรวจสอบประกาศทางการ",
         floodUpdated: "อัปเดตข้อมูลจังหวัด: ",
         floodHighestProvince: "จังหวัดระดับสูงสุด: ",
         floodAssessment: "ระดับประเมิน: ",
@@ -57,7 +57,7 @@ const translations = {
         floodNearestDistance: "ระยะถึงสถานีในจังหวัดระดับสูงสุด: ",
         floodSeeFull: "ดูรายงานฉบับเต็มเพื่อดูรายละเอียด",
         floodNoLevel: "ไม่ทราบระดับน้ำ",
-        floodNoProvinceData: "⚠️ ข้อมูลจังหวัดอาจเก่า",
+        floodNoProvinceData: "ข้อมูลจังหวัดอาจเก่า",
         floodCritical: "วิกฤต",
         floodWatch: "เฝ้าระวัง",
         floodNormal: "ปกติ",
@@ -93,14 +93,14 @@ const translations = {
         taskPlaceholder: "Type a task... (Press Enter or ^ to add)",
         addTaskTitle: "Add task", deleteTaskTitle: "Delete task",
         floodDescription: "Check flood-affected provinces and nearby water-level stations.",
-        floodButton: "🌊 Check nearby flood conditions",
+        floodButton: "Check nearby flood conditions",
         floodGpsNote: "Yuno only requests GPS access when you tap the button.",
         floodFullTitle: "Full flood situation report",
-        floodViewDetails: "📋 View full report",
+        floodViewDetails: "View full report",
         floodHideDetails: "Hide full report",
         floodLoading: "Checking flood conditions. GPS access will be requested if you allow it...",
-        floodTitle: "🌊 Thailand flood situation report",
-        floodStale: "⚠️ Province data may be outdated. Please check official alerts.",
+        floodTitle: "Thailand flood situation report",
+        floodStale: "Province data may be outdated. Please check official alerts.",
         floodUpdated: "Province data updated: ",
         floodHighestProvince: "Highest alert provinces: ",
         floodAssessment: "Assessment: ",
@@ -122,7 +122,7 @@ const translations = {
         floodNearestDistance: "Distance to a station in a highest-alert province: ",
         floodSeeFull: "View the full report for more details.",
         floodNoLevel: "Water level unavailable",
-        floodNoProvinceData: "⚠️ Province data may be outdated",
+        floodNoProvinceData: "Province data may be outdated",
         floodCritical: "Critical",
         floodWatch: "Watch",
         floodNormal: "Normal",
@@ -316,11 +316,18 @@ function changeOpacity(val) {
     );
 }
 
+function stripEmoji(value) {
+    return String(value)
+        .replace(/[\\p{Extended_Pictographic}\\p{Regional_Indicator}\\uFE0F\\u200D\\u20E3]/gu, "")
+        .replace(/[ \\t]{2,}/g, " ")
+        .trim();
+}
+
 function setDialogue(text, imgPath) {
     clearTimeout(floodIdleTimer);
     const dialogue = document.getElementById('dialogue-text');
-    // Normalize escaped newline text from any feature into real line breaks.
-    dialogue.textContent = String(text).replace(/\\n/g, "\n");
+    // Remove emoji from all Yuno chat messages while preserving line breaks.
+    dialogue.textContent = stripEmoji(text).replace(/\\n/g, "\n");
     if (imgPath) {
         document.getElementById('char-img').src = imgPath;
     }
@@ -657,7 +664,7 @@ async function checkFlood() {
         const detailButton = document.getElementById("flood-details-toggle");
         const detailPanel = document.getElementById("flood-details");
         if (detail && detailButton && detailPanel) {
-            detail.textContent = fullLines.join("\n");
+            detail.textContent = stripEmoji(fullLines.join("\n"));
             detailPanel.hidden = true;
             detailButton.hidden = false;
             detailButton.textContent = t.floodViewDetails;
