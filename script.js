@@ -318,7 +318,7 @@ function changeOpacity(val) {
 
 function stripEmoji(value) {
     return String(value)
-        .replace(/[\\p{Extended_Pictographic}\\p{Regional_Indicator}\\uFE0F\\u200D\\u20E3]/gu, "")
+        .replace(/[\p{Extended_Pictographic}\p{Regional_Indicator}\uFE0F\u200D\u20E3]/gu, "")
         .replace(/[ \\t]{2,}/g, " ")
         .trim();
 }
